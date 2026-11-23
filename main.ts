@@ -2,16 +2,16 @@ import { copyFileSync, mkdirSync, statSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const here = dirname(fileURLToPath(import.meta.url));
-const source = join(here, "entry.png");
-const target = join("/output", "entry.png");
+const root = dirname(fileURLToPath(import.meta.url));
+const source = join(root, "entry.png");
+const outDir = "/output";
+const target = join(outDir, "entry.png");
 
-mkdirSync("/output", { recursive: true });
+mkdirSync(outDir, { recursive: true });
 copyFileSync(source, target);
-
-const from = statSync(source);
-const to = statSync(target);
-if (from.size !== to.size) {
-  throw new Error(`entry.png size mismatch: source ${from.size} vs output ${to.size}`);
+const sourceSize = statSync(source).size;
+const targetSize = statSync(target).size;
+if (sourceSize !== targetSize) {
+  throw new Error(`entry.png size mismatch: source ${sourceSize} bytes, output ${targetSize} bytes`);
 }
-console.log(`entry.png OK: ${to.size} bytes copied to ${target}`);
+console.log(`entry.png copied to /output/entry.png (${targetSize} bytes, verified)`);
